@@ -62,7 +62,6 @@
 
 // export default Navbar;
 
-
 import "./navbar.scss";
 import {
   HomeOutlined,
@@ -71,33 +70,40 @@ import {
   NotificationsOutlined,
   SearchOutlined,
 } from "@mui/icons-material";
-import { AuthContext } from "../../context/authContext"; 
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { DarkModeContext } from "../../context/darkModeContext";
+import { AuthContext } from "../../context/authContext";
 
 const Navbar = () => {
-  const { state,dispatch } = useContext(AuthContext);
-  const username = state?.user?.username || JSON.parse(localStorage.getItem("user"))?.username;
-
+  const { state, dispatch } = useContext(AuthContext);
   const { toggle, darkMode } = useContext(DarkModeContext);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Retrieve username from state or fallback to localStorage
+  let username = "Guest";
+  try {
+    username =
+      state?.user?.username ||
+      JSON.parse(localStorage.getItem("user"))?.username ||
+      "Guest";
+  } catch (error) {
+    console.error("Error parsing user data from localStorage:", error);
+  }
 
   const handleToggleDropdown = () => setDropdownOpen(!dropdownOpen);
 
   const handleLogout = () => {
-    const handleLogout = () => {
-      localStorage.removeItem('authToken'); 
-      dispatch({ type: 'LOGOUT' }); 
-      navigate('/login'); 
-    };
+    localStorage.removeItem("authToken"); // Clear token
+    dispatch({ type: "LOGOUT" }); // Update context
+    navigate("/login"); // Redirect to login
   };
 
   return (
     <div className="navbar">
       <div className="left">
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/" className="logo">
           <span>MyApp</span>
         </Link>
         <HomeOutlined />
@@ -113,18 +119,26 @@ const Navbar = () => {
       </div>
       <div className="right">
         <NotificationsOutlined />
-        <div className="user" onClick={handleToggleDropdown}>
+        <div
+          className="user"
+          onClick={handleToggleDropdown}
+          role="button"
+          aria-haspopup="true"
+          aria-expanded={dropdownOpen}
+        >
           <img
-            src={state.user?.attributes?.picture || "default-avatar.png"} // Use user data from state
+            src={
+              state?.user?.profilePicture || "default-avatar.png"
+            } // Fallback to default avatar
             alt="Profile"
           />
-          <span>{username || "Guest"}</span> {/* Display user name from state */}
+          <span>{username}</span>
           {dropdownOpen && (
             <div className="dropdown">
-              {state.user ? (
-                <button onClick={handleLogout}>Logout</button> // Show logout if user is logged in
+              {state?.user ? (
+                <button onClick={handleLogout}>Logout</button>
               ) : (
-                <button onClick={() => navigate("/login")}>Login</button> // Show login if no user
+                <button onClick={() => navigate("/login")}>Login</button>
               )}
             </div>
           )}
@@ -135,3 +149,5 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+

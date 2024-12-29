@@ -1,8 +1,6 @@
-// src/context/authContext.js
+import React, { createContext, useReducer, useContext } from "react";
 
-import React, { createContext, useReducer } from 'react';
-
-// Define initial state
+// Initial state
 const initialState = {
   user: null,
   token: null,
@@ -10,28 +8,42 @@ const initialState = {
   error: null,
 };
 
-// Define actions
-const actionTypes = {
-  LOGIN_START: 'LOGIN_START',
-  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
-  LOGIN_FAILURE: 'LOGIN_FAILURE',
-  LOGOUT: 'LOGOUT',
-  SET_USER_DATA: 'SET_USER_DATA',
-};
-
-// Define reducer function
+// Auth reducer
 const authReducer = (state, action) => {
+  console.log("Action received in reducer:", action); 
+
   switch (action.type) {
-    case actionTypes.LOGIN_START:
+    case "LOGIN":
+      return {
+        ...state,
+        user: action.payload.user,
+        token: action.payload.token,
+        loading: false,
+        error: null, 
+      };
+
+
+    case "LOGOUT":
+      return { ...state, user: null, token: null, loading: false , error:null};
+    case "LOADING":
+      return { ...state, loading: true };
+
+    case "SIGNUP_LOADING":
       return { ...state, loading: true, error: null };
-    case actionTypes.LOGIN_SUCCESS:
-      return { ...state, user: action.payload.user, token: action.payload.token, loading: false };
-    case actionTypes.LOGIN_FAILURE:
-      return { ...state, error: action.payload.error, loading: false };
-    case actionTypes.LOGOUT:
-      return { ...initialState }; // Reset state
-    case actionTypes.SET_USER_DATA:
-      return { ...state, user: action.payload };
+
+    case "SIGNUP_SUCCESS":
+      return {
+        ...state,
+        user: action.payload.user,
+        loading: false,
+        error: null,
+      };
+
+    case "SIGNUP_ERROR":
+      return { ...state, loading: false, error: action.payload };
+
+    case "ERROR":
+      return { ...state, error: action.payload, loading: false };
     default:
       return state;
   }
@@ -40,13 +52,17 @@ const authReducer = (state, action) => {
 // Create context
 export const AuthContext = createContext();
 
-// Create provider component
+// Auth provider
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-
   return (
     <AuthContext.Provider value={{ state, dispatch }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+// Custom hook to use AuthContext
+export const useAuth = () => {
+  return useContext(AuthContext);
 };

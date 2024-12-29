@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { DarkModeContextProvider } from "./context/darkModeContext";
 import { PostContextProvider } from "./context/postContext";
-import { AuthProvider } from "./context/authContext"; // Import AuthProvider
+import { AuthProvider,  } from "./context/authContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

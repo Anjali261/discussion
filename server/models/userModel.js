@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     profilePic: { type: String, default: "" },
     createdAt: { type: Date, default: Date.now },
+    googleId: { type: String, unique: true, sparse: true }, 
 
   },
   { timestamps: true }

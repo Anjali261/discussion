@@ -13,6 +13,8 @@ import Navbar from "./components/navbar/Navbar";
 import LeftBar from "./components/leftBar/LeftBar";
 import RightBar from "./components/rightBar/RightBar";
 import { AuthContext } from "./context/authContext"; // Import AuthContext
+import Signup from "./pages/login/Signup";
+import VerifyOTP from "./pages/login/VerifyOTP";
 
 // Lazy loading components
 const Home = lazy(() => import("./pages/home/Home"));
@@ -83,7 +85,15 @@ function App() {
       path: "/register",
       element: (
         <Suspense fallback={<div>Loading...</div>}>
-          <Register />
+          <Signup />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/verify-otp",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <VerifyOTP />
         </Suspense>
       ),
     },
@@ -93,3 +103,4 @@ function App() {
 }
 
 export default App;
+
